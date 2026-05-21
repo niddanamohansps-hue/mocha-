@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Dev Quiz Engine</title>
+    <!-- Modern Typography: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{% static 'quiz/css/styles.css' %}">
+</head>
+<body>
+    <!-- Background glowing decorative blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- Django CSRF Token Integration -->
+    {% csrf_token %}
+
+    <div class="app-container">
+        <!-- Main Glassmorphic Card -->
+        <main class="quiz-card" id="quizCard">
+            <!-- Linear Progress Indicator at the top -->
+            <div class="card-progress-bar-container" id="progressBarContainer">
+                <div class="card-progress-bar" id="progressBar" style="width: 0%;"></div>
+            </div>
+
+            <!-- Header Section -->
+            <header class="quiz-header">
+                <div class="logo-area">
+                    <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <div class="logo-text">
+                        <h1>DEV<span>QUIZ</span></h1>
+                        <p class="subtitle">Test your Django & Python skills</p>
+                    </div>
+                </div>
+                <div class="status-widgets">
+                    <!-- Timer Widget -->
+                    <div class="timer-widget active" id="timerWidget">
+                        <span class="timer-icon"><i class="fa-regular fa-clock"></i></span>
+                        <span class="timer-text" id="timerText">15s</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Card Content Frame -->
+            <div class="quiz-content" id="quizContent">
+                <!-- Welcome/Start Screen -->
+                <div class="quiz-screen active" id="welcomeScreen">
+                    <div class="welcome-hero">
+                        <div class="welcome-illustration">
+                            <i class="fa-solid fa-code welcome-icon icon-anim"></i>
+                        </div>
+                        <h2>Ready to Test Your Knowledge?</h2>
+                        <p>Challenge yourself with high-quality backend development questions. You have exactly <strong>15 seconds</strong> per question. Can you hit a perfect score?</p>
+                    </div>
+
+                    <!-- Student Registration Form -->
+                    <div class="student-form-container">
+                        <div class="form-header">
+                            <span class="form-icon"><i class="fa-solid fa-user-graduate"></i></span>
+                            <h4>Student Portal</h4>
+                        </div>
+                        <div class="form-fields">
+                            <div class="input-group">
+                                <span class="input-icon"><i class="fa-solid fa-signature"></i></span>
+                                <input type="text" id="studentNameInput" required placeholder="Enter Your Full Name">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-icon"><i class="fa-solid fa-id-card-clip"></i></span>
+                                <input type="text" id="studentIdInput" required placeholder="Enter Student ID / Email">
+                            </div>
+                        </div>
+                        <p class="form-disclaimer">Your score will be logged to the classroom leaderboard.</p>
+                    </div>
+                    
+                    <div class="quiz-instructions">
+                        <div class="instruction-item">
+                            <span class="instruction-num">1</span>
+                            <p>Read the question carefully before selecting an answer.</p>
+                        </div>
+                        <div class="instruction-item">
+                            <span class="instruction-num">2</span>
+                            <p>Once you select an option, press "Submit Answer" to validate.</p>
+                        </div>
+                        <div class="instruction-item">
+                            <span class="instruction-num">3</span>
+                            <p>Green shows correct answers, Red shows incorrect choices.</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-large btn-block" id="startBtn">
+                        Start Challenge <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Active Question Screen -->
+                <div class="quiz-screen" id="questionScreen">
+                    <!-- Question Context/Info -->
+                    <div class="question-meta">
+                        <span class="badge" id="questionBadge">Question 1/6</span>
+                        <div class="badge score-badge" id="liveScoreBadge">Score: 0</div>
+                    </div>
+
+                    <!-- Question Text -->
+                    <h3 class="question-text" id="questionText">
+                        Loading question...
+                    </h3>
+
+                    <!-- Options List -->
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Option template generated by JS -->
+                        <button class="option-btn" data-option="Option1">
+                            <span class="option-letter">A</span>
+                            <span class="option-content">Option text content goes here...</span>
+                            <span class="feedback-icon"><i class="fa-solid"></i></span>
+                        </button>
+                        <button class="option-btn" data-option="Option2">
+                            <span class="option-letter">B</span>
+                            <span class="option-content">Option text content goes here...</span>
+                            <span class="feedback-icon"><i class="fa-solid"></i></span>
+                        </button>
+                        <button class="option-btn" data-option="Option3">
+                            <span class="option-letter">C</span>
+                            <span class="option-content">Option text content goes here...</span>
+                            <span class="feedback-icon"><i class="fa-solid"></i></span>
+                        </button>
+                        <button class="option-btn" data-option="Option4">
+                            <span class="option-letter">D</span>
+                            <span class="option-content">Option text content goes here...</span>
+                            <span class="feedback-icon"><i class="fa-solid"></i></span>
+                        </button>
+                    </div>
+
+                    <!-- Card Actions -->
+                    <div class="card-actions">
+                        <button class="btn btn-primary" id="submitBtn" disabled>
+                            Submit Answer <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                        <button class="btn btn-accent hidden" id="nextBtn">
+                            Next Question <i class="fa-solid fa-circle-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results/Completion Screen -->
+                <div class="quiz-screen" id="resultsScreen">
+                    <div class="results-hero">
+                        <div class="gauge-container">
+                            <!-- Circular progress gauge -->
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+                                <circle class="gauge-fill" id="gaugeFill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"></circle>
+                            </svg>
+                            <div class="gauge-text">
+                                <span class="gauge-percentage" id="resultsPercent">83%</span>
+                                <span class="gauge-label" id="resultsScoreText">5/6 Correct</span>
+                            </div>
+                        </div>
+                        <h2 id="feedbackTitle">Magnificent Performance!</h2>
+                        <p class="results-summary" id="resultsSummaryText">
+                            You've shown a solid understanding of Django structures and Python.
+                        </p>
+                    </div>
+
+                    <!-- Performance Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-icon icon-success"><i class="fa-solid fa-circle-check"></i></span>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statsCorrect">5</span>
+                                <span class="stat-label">Correct</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon icon-danger"><i class="fa-solid fa-circle-xmark"></i></span>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statsWrong">1</span>
+                                <span class="stat-label">Incorrect</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon icon-accent"><i class="fa-solid fa-hourglass-half"></i></span>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statsTime">100%</span>
+                                <span class="stat-label">Completion</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-actions full-width">
+                        <button class="btn btn-primary btn-large btn-block" id="restartBtn">
+                            <i class="fa-solid fa-rotate-right"></i> Restart Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Leaderboard & Classroom Activity Section -->
+        <section class="leaderboard-card" id="leaderboardSection">
+            <div class="leaderboard-header">
+                <div class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></div>
+                <div class="leaderboard-titles">
+                    <h2>Classroom Leaderboard</h2>
+                    <p class="subtitle">Top scoring students and active classroom attempts</p>
+                </div>
+            </div>
+            <div class="leaderboard-content">
+                <div class="table-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Rank</th>
+                                <th>Student</th>
+                                <th>Student ID</th>
+                                <th style="text-align: center;">Score</th>
+                                <th style="text-align: center;">Grade</th>
+                                <th style="text-align: right;">Time Logs</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <tr>
+                                <td colspan="6" class="table-empty">
+                                    <i class="fa-solid fa-spinner fa-spin table-loading-spinner"></i>
+                                    Fetching class standings...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="app-footer">
+            <p>Designed with <i class="fa-solid fa-heart footer-heart"></i> using Django &amp; Vanilla Web Technologies</p>
+        </footer>
+    </div>
+
+    <!-- JS script -->
+    <script src="{% static 'quiz/js/quiz.js' %}"></script>
+</body>
+</html>
