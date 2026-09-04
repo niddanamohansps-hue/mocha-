@@ -1,0 +1,46 @@
+name: CI / Production Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Typecheck, Build & Bundle Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install clean dependencies
+        run: npm ci
+
+      - name: TypeScript type-check and Vite production build
+        run: npm run build
+
+      - name: Verify build artifacts
+        run: |
+          test -d dist || { echo "dist directory not found!"; exit 1; }
+          test -f dist/index.html || { echo "dist/index.html not found!"; exit 1; }
+          echo "Production build verified successfully."
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+          retention-days: 7
