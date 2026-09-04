@@ -1,0 +1,91 @@
+import React from 'react';
+import {
+  Globe,
+  Code2,
+  BarChart3,
+  Users,
+  Bot,
+  Zap,
+  MessageSquare,
+  Cloud,
+  ShieldCheck,
+  Briefcase,
+  FileText,
+  Calendar,
+  CheckCircle,
+  LayoutDashboard,
+  TrendingUp,
+  UserCheck,
+  Database,
+  Clock,
+  Kanban,
+  BarChart2,
+  ListOrdered,
+  Search,
+  Cpu,
+  PieChart,
+  Lock,
+  CalendarCheck,
+  CalendarDays,
+  Sliders,
+  Boxes,
+  Palette,
+  Terminal,
+  ShieldAlert,
+  Rocket,
+  Layout,
+  Server,
+  GitBranch,
+  LucideIcon,
+} from 'lucide-react';
+
+interface DynamicIconProps {
+  name: string;
+  className?: string;
+  size?: number;
+}
+
+const iconMap: Record<string, LucideIcon> = {
+  Globe,
+  Code2,
+  BarChart3,
+  Users,
+  Bot,
+  Zap,
+  MessageSquare,
+  Cloud,
+  ShieldCheck,
+  Briefcase,
+  FileText,
+  Calendar,
+  CheckCircle,
+  LayoutDashboard,
+  TrendingUp,
+  UserCheck,
+  Database,
+  Clock,
+  Kanban,
+  BarChart2,
+  ListOrdered,
+  Search,
+  Cpu,
+  PieChart,
+  Lock,
+  CalendarCheck,
+  CalendarDays,
+  Sliders,
+  Boxes,
+  Palette,
+  Terminal,
+  ShieldAlert,
+  Rocket,
+  Layout,
+  Server,
+  GitBranch,
+  SearchCheck: Search,
+};
+
+export const DynamicIcon: React.FC<DynamicIconProps> = ({ name, className = 'w-5 h-5', size }) => {
+  const IconComponent = iconMap[name] || Code2;
+  return <IconComponent className={className} size={size} />;
+};
